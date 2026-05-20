@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { isApiMockingEnabled } from '../mocks/config'
 
 const DEFAULT_TMDB_BASE_URL = 'https://api.themoviedb.org/3'
 
@@ -23,6 +24,10 @@ export function getTmdbImageUrl(path: string | null, size = 'w500') {
     return ''
   }
 
+  if (/^(https?:|data:|blob:)/.test(path)) {
+    return path
+  }
+
   return `https://image.tmdb.org/t/p/${size}/${path.replace(/^\/+/, '')}`
 }
 
@@ -35,7 +40,7 @@ tmdbClient.interceptors.request.use((config) => {
   const accessToken = tmdbConfig.accessToken || (looksLikeTmdbAccessToken(tmdbConfig.apiKey) ? tmdbConfig.apiKey : '')
   const apiKey = accessToken ? '' : tmdbConfig.apiKey
 
-  if (!apiKey && !accessToken) {
+  if (!apiKey && !accessToken && !isApiMockingEnabled()) {
     throw new Error(
       'Brakuje VITE_TMDB_API_KEY albo VITE_TMDB_ACCESS_TOKEN w pliku .env. Skopiuj .env.example do .env i wpisz dane TMDB.',
     )

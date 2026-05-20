@@ -4,7 +4,7 @@ import axios from 'axios'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
-import { isMock401Enabled } from './mocks/config'
+import { isApiMockingEnabled } from './mocks/config'
 import './styles.css'
 
 function shouldRetryQuery(failureCount: number, error: unknown) {
@@ -40,7 +40,7 @@ async function cleanupMockServiceWorker() {
 }
 
 async function prepareMocking() {
-  if (!import.meta.env.DEV || !isMock401Enabled()) {
+  if (!import.meta.env.DEV || !isApiMockingEnabled()) {
     await cleanupMockServiceWorker()
     return
   }

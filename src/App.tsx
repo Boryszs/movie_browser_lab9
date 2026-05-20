@@ -14,7 +14,7 @@ import { useFavorites } from './hooks/useFavorites'
 import { useFetchMovies } from './hooks/useFetchMovies'
 import { useGenres } from './hooks/useGenres'
 import { useInfiniteMovies } from './hooks/useInfiniteMovies'
-import { isMock401Enabled, MOCK_API_401_VALUE, MOCK_API_PARAM } from './mocks/config'
+import { getMockApiMode, isApiMockingEnabled, isMock401Enabled, MOCK_API_401_VALUE, MOCK_API_PARAM } from './mocks/config'
 import { getErrorMessage } from './utils/errorMessage'
 import { toFavoriteMovie } from './utils/movieMapper'
 
@@ -44,7 +44,9 @@ function App() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [useInfiniteScroll, setUseInfiniteScroll] = useState(false)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
-  const mock401Enabled = import.meta.env.DEV && isMock401Enabled()
+  const mockApiMode = getMockApiMode()
+  const mock401Enabled = isMock401Enabled()
+  const apiMockingEnabled = isApiMockingEnabled()
 
   const debouncedSearchValue = useDebounce(searchValue, 300)
   const normalizedSearchValue = debouncedSearchValue.trim()
@@ -158,8 +160,8 @@ function App() {
           <p className="eyebrow">React Query v5 + TMDB API</p>
           <h1>Movie Browser</h1>
           <p>
-            Popularne filmy, wyszukiwanie z debouncingiem, modal szczegółów z lazy fetch, ulubione w
-            localStorage i bonusowy infinite scroll.
+            Popularne filmy, wyszukiwanie z debouncingiem i modal szczegółów działają na lokalnym
+            mocku MSW zgodnym z odpowiedziami TMDB.
           </p>
         </div>
       </header>
@@ -216,8 +218,10 @@ function App() {
           <StatusPill label="Wyniki" value={totalResults} />
           <StatusPill label="Widoczne" value={visibleMovies.length} />
           {isFetching ? <StatusPill label="Sieć" value="odświeżanie" /> : null}
-          {mock401Enabled ? <StatusPill label="MSW" value="401" /> : null}
+          {apiMockingEnabled ? <StatusPill label="MSW" value={mockApiMode === 'error-401' ? '401' : 'mock'} /> : null}
         </section>
+
+        {/* Warm-up REST API: <CharacterWarmup /> */}
 
         {genresQuery.isError && !showFavoritesOnly ? (
           <ErrorBanner message={`Nie udało się pobrać gatunków: ${getErrorMessage(genresQuery.error)}`} />
