@@ -8,13 +8,13 @@ import { MovieGrid } from './components/MovieGrid'
 import { Pagination } from './components/Pagination'
 import { SearchBar } from './components/SearchBar'
 import { SkeletonGrid } from './components/SkeletonGrid'
-import { StatusPill } from './components/StatusPill'
+// import { StatusPill } from './components/StatusPill'
 import { useDebounce } from './hooks/useDebounce'
 import { useFavorites } from './hooks/useFavorites'
 import { useFetchMovies } from './hooks/useFetchMovies'
 import { useGenres } from './hooks/useGenres'
 import { useInfiniteMovies } from './hooks/useInfiniteMovies'
-import { getMockApiMode, isApiMockingEnabled, isMock401Enabled, MOCK_API_401_VALUE, MOCK_API_PARAM } from './mocks/config'
+import { isMock401Enabled, MOCK_API_401_VALUE, MOCK_API_PARAM } from './mocks/config'
 import { getErrorMessage } from './utils/errorMessage'
 import { toFavoriteMovie } from './utils/movieMapper'
 
@@ -24,17 +24,17 @@ function filterByGenre<T extends MovieSummary | FavoriteMovie>(movies: T[], genr
   return genreId === null ? movies : movies.filter((movie) => movie.genre_ids.includes(genreId))
 }
 
-function getSourceLabel(source: MovieSource) {
-  const labels: Record<MovieSource, string> = {
-    popular: 'popularne',
-    search: 'wyszukiwanie',
-    favorites: 'ulubione',
-    infinite: 'infinite scroll',
-    'idle-search': 'czekam na 2 znaki',
-  }
-
-  return labels[source]
-}
+// function getSourceLabel(source: MovieSource) {
+//   const labels: Record<MovieSource, string> = {
+//     popular: 'popularne',
+//     search: 'wyszukiwanie',
+//     favorites: 'ulubione',
+//     infinite: 'infinite scroll',
+//     'idle-search': 'czekam na 2 znaki',
+//   }
+//
+//   return labels[source]
+// }
 
 function App() {
   const [page, setPage] = useState(1)
@@ -44,9 +44,9 @@ function App() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [useInfiniteScroll, setUseInfiniteScroll] = useState(false)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
-  const mockApiMode = getMockApiMode()
+  // const mockApiMode = getMockApiMode()
   const mock401Enabled = isMock401Enabled()
-  const apiMockingEnabled = isApiMockingEnabled()
+  // const apiMockingEnabled = isApiMockingEnabled()
 
   const debouncedSearchValue = useDebounce(searchValue, 300)
   const normalizedSearchValue = debouncedSearchValue.trim()
@@ -96,17 +96,17 @@ function App() {
   )
 
   const isLoading = source === 'infinite' ? infiniteQuery.isPending : source === 'popular' || source === 'search' ? moviesQuery.isPending : false
-  const isFetching = genresQuery.isFetching || moviesQuery.isFetching || infiniteQuery.isFetching
+  // const isFetching = genresQuery.isFetching || moviesQuery.isFetching || infiniteQuery.isFetching
   const error = source === 'infinite' ? infiniteQuery.error : source === 'popular' || source === 'search' ? moviesQuery.error : null
   const totalPages = Math.min(moviesQuery.data?.total_pages ?? 1, 500)
-  const totalResults =
-    source === 'favorites'
-      ? favorites.length
-      : source === 'infinite'
-        ? infiniteQuery.data?.pages.at(-1)?.total_results ?? 0
-        : source === 'popular' || source === 'search'
-          ? moviesQuery.data?.total_results ?? 0
-          : 0
+  // const totalResults =
+  //   source === 'favorites'
+  //     ? favorites.length
+  //     : source === 'infinite'
+  //       ? infiniteQuery.data?.pages.at(-1)?.total_results ?? 0
+  //       : source === 'popular' || source === 'search'
+  //         ? moviesQuery.data?.total_results ?? 0
+  //         : 0
 
 
   useEffect(() => {
@@ -213,6 +213,7 @@ function App() {
           </div>
         </section>
 
+        {/*
         <section className="status-row" aria-label="Status aplikacji">
           <StatusPill label="Źródło" value={getSourceLabel(source)} />
           <StatusPill label="Wyniki" value={totalResults} />
@@ -220,6 +221,7 @@ function App() {
           {isFetching ? <StatusPill label="Sieć" value="odświeżanie" /> : null}
           {apiMockingEnabled ? <StatusPill label="MSW" value={mockApiMode === 'error-401' ? '401' : 'mock'} /> : null}
         </section>
+        */}
 
         {/* Warm-up REST API: <CharacterWarmup /> */}
 

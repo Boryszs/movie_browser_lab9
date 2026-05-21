@@ -14,7 +14,6 @@ export function SearchBar({ value, onChange, onClear }: SearchBarProps) {
           placeholder="np. Matrix, Batman, Diuna..."
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          aria-describedby="search-hint"
         />
         {value ? (
           <button type="button" className="ghost-button" onClick={onClear}>
@@ -22,7 +21,6 @@ export function SearchBar({ value, onChange, onClear }: SearchBarProps) {
           </button>
         ) : null}
       </div>
-      <small id="search-hint">Request po 300 ms i minimum 2 znakach.</small>
     </label>
   )
 }
