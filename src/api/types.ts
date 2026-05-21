@@ -6,6 +6,11 @@ export type TmdbPagedResponse<T> = {
 }
 
 export type MovieSummary = {
+  adult?: boolean
+  original_language?: string
+  original_title?: string
+  popularity?: number
+  video?: boolean
   id: number
   title: string
   overview: string
@@ -23,6 +28,14 @@ export type MovieGenre = {
 }
 
 export type MovieDetails = {
+  adult?: boolean
+  budget?: number
+  imdb_id?: string | null
+  original_language?: string
+  original_title?: string
+  popularity?: number
+  revenue?: number
+  video?: boolean
   id: number
   title: string
   overview: string

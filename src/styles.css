@@ -95,8 +95,6 @@ img {
   line-height: 1.7;
 }
 
-.hero-actions,
-.details-actions,
 .toggle-group {
   display: flex;
   flex-wrap: wrap;
@@ -107,10 +105,11 @@ img {
 .app-shell {
   width: min(1120px, calc(100% - 2rem));
   margin: 0 auto 4rem;
+  display: grid;
+  gap: 1rem;
 }
 
 .toolbar,
-.status-row,
 .error-banner,
 .empty-state,
 .pagination,
@@ -168,16 +167,10 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-small {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
 .primary-button,
 .secondary-button,
 .ghost-button,
-.details-button,
-.secondary-link {
+.details-button {
   min-height: 2.7rem;
   border-radius: 999px;
   border: 1px solid transparent;
@@ -192,8 +185,7 @@ small {
   color: white;
 }
 
-.secondary-button,
-.secondary-link {
+.secondary-button {
   border-color: var(--border);
   background: rgba(15, 23, 42, 0.72);
   color: var(--text);
@@ -209,11 +201,6 @@ small {
   color: #fecdd3;
 }
 
-.secondary-link.danger {
-  border-color: rgba(251, 113, 133, 0.52);
-  color: #fecdd3;
-}
-
 .ghost-button {
   min-height: 2.45rem;
   background: transparent;
@@ -221,37 +208,11 @@ small {
   color: var(--muted);
 }
 
-.status-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1rem 0;
-  padding: 0.85rem;
-  border-radius: 1.25rem;
-}
-
-.status-pill {
-  display: inline-flex;
-  gap: 0.35rem;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.45rem 0.75rem;
-  background: rgba(15, 23, 42, 0.64);
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.status-pill strong {
-  color: var(--text);
-}
-
 .error-banner {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-  margin: 1rem 0;
   padding: 1rem;
   border-radius: 1.25rem;
   border-color: rgba(251, 113, 133, 0.45);
@@ -272,7 +233,6 @@ small {
   display: grid;
   place-items: center;
   min-height: 18rem;
-  margin: 1rem 0;
   padding: 2rem;
   border-radius: 1.5rem;
   text-align: center;
@@ -405,7 +365,6 @@ small {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-top: 1rem;
   padding: 1rem;
   border-radius: 1.25rem;
   color: var(--muted);
