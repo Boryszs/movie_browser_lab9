@@ -1,5 +1,6 @@
 import type { FavoriteMovie, MovieGenre, MovieSummary } from '../api/types'
 import { MoviePoster } from './MoviePoster'
+import './MovieCard.css'
 
 type MovieCardProps = {
   movie: MovieSummary | FavoriteMovie
@@ -23,7 +24,7 @@ export function MovieCard({
     .slice(0, 2)
 
   return (
-    <article className="movie-card">
+    <article className="movie-card card">
       <button
         type="button"
         className="poster-button"

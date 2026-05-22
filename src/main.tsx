@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import { isApiMockingEnabled } from './mocks/config'
 import './styles.css'
+import { BrowserRouter } from 'react-router-dom'
 
 function shouldRetryQuery(failureCount: number, error: unknown) {
   if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -58,10 +59,12 @@ async function prepareMocking() {
 function renderApp() {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
+      <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <App />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
+      </BrowserRouter>
     </StrictMode>,
   )
 }
