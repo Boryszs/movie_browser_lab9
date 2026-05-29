@@ -153,8 +153,18 @@ function App() {
     window.location.assign(url.toString())
   }
 
+  const moviesSectionTitle = showFavoritesOnly
+    ? 'Lista ulubionych filmów'
+    : shouldSearch
+      ? `Wyniki wyszukiwania dla frazy ${normalizedSearchValue}`
+      : 'Lista filmów'
+
   return (
     <>
+      <a className="skip-link" href="#main-content">
+        Przejdź do treści
+      </a>
+
       <header className="hero">
         <div className="hero-content">
           <p className="eyebrow">React Query v5 + TMDB API</p>
@@ -166,7 +176,7 @@ function App() {
         </div>
       </header>
 
-      <main className="app-shell">
+      <main id="main-content" className="app-shell" tabIndex={-1}>
         <section className="toolbar" aria-label="Filtry i wyszukiwanie">
           <SearchBar
             value={searchValue}
@@ -248,14 +258,19 @@ function App() {
         ) : null}
 
         {!isLoading && !error && visibleMovies.length > 0 ? (
-          <MovieGrid
-            movies={visibleMovies}
-            genresById={genresById}
-            isFavorite={isFavorite}
-            onOpenDetails={setSelectedMovieId}
-            onToggleFavorite={handleToggleFavorite}
-            dimmed={source !== 'infinite' && moviesQuery.isPlaceholderData}
-          />
+          <section className="movies-section" aria-labelledby="movies-section-title">
+            <h2 id="movies-section-title" className="visually-hidden">
+              {moviesSectionTitle}
+            </h2>
+            <MovieGrid
+              movies={visibleMovies}
+              genresById={genresById}
+              isFavorite={isFavorite}
+              onOpenDetails={setSelectedMovieId}
+              onToggleFavorite={handleToggleFavorite}
+              dimmed={source !== 'infinite' && moviesQuery.isPlaceholderData}
+            />
+          </section>
         ) : null}
 
         {source === 'popular' || source === 'search' ? (

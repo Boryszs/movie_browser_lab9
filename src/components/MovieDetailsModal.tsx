@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { getTmdbImageUrl } from '../api/tmdbClient'
 import { useMovieDetails } from '../hooks/useMovieDetails'
 import { getErrorMessage } from '../utils/errorMessage'
@@ -10,6 +10,16 @@ type MovieDetailsModalProps = {
   movieId: number | null
   onClose: () => void
 }
+
+
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',')
 
 function formatRuntime(runtime: number | null) {
   if (!runtime) {
@@ -23,15 +33,55 @@ function formatRuntime(runtime: number | null) {
 
 export function MovieDetailsModal({ movieId, onClose }: MovieDetailsModalProps) {
   const { data, error, isError, isPending, refetch } = useMovieDetails(movieId)
+  const modalRef = useRef<HTMLElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const previouslyFocusedElementRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (movieId === null) {
       return undefined
     }
 
+    previouslyFocusedElementRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null
+
+    const focusTimer = window.setTimeout(() => {
+      closeButtonRef.current?.focus()
+    }, 0)
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        event.preventDefault()
         onClose()
+        return
+      }
+
+      if (event.key !== 'Tab' || !modalRef.current) {
+        return
+      }
+
+      const focusableElements = Array.from(
+        modalRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+      ).filter((element) => element.offsetParent !== null)
+
+      if (focusableElements.length === 0) {
+        event.preventDefault()
+        return
+      }
+
+      const firstElement = focusableElements[0]
+      const lastElement = focusableElements[focusableElements.length - 1]
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault()
+        lastElement.focus()
+        return
+      }
+
+      if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault()
+        firstElement.focus()
       }
     }
 
@@ -39,8 +89,10 @@ export function MovieDetailsModal({ movieId, onClose }: MovieDetailsModalProps) 
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
+      window.clearTimeout(focusTimer)
       document.body.classList.remove('modal-open')
       window.removeEventListener('keydown', handleKeyDown)
+      previouslyFocusedElementRef.current?.focus()
     }
   }, [movieId, onClose])
 
@@ -53,13 +105,20 @@ export function MovieDetailsModal({ movieId, onClose }: MovieDetailsModalProps) 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
+        ref={modalRef}
         className="movie-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="movie-details-title"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button type="button" className="modal-close" onClick={onClose} aria-label="Zamknij modal">
+        <button
+          ref={closeButtonRef}
+          type="button"
+          className="modal-close"
+          onClick={onClose}
+          aria-label="Zamknij okno szczegółów filmu"
+        >
           ×
         </button>
 

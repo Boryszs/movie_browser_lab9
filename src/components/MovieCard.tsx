@@ -40,10 +40,15 @@ export function MovieCard({
             type="button"
             className="favorite-button"
             aria-pressed={isFavorite}
+            aria-label={
+              isFavorite
+                ? `Usuń film ${movie.title} z ulubionych`
+                : `Dodaj film ${movie.title} do ulubionych`
+            }
             onClick={() => onToggleFavorite(movie)}
             title={isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
           >
-            {isFavorite ? '♥' : '♡'}
+            <span aria-hidden="true">{isFavorite ? '♥' : '♡'}</span>
           </button>
         </div>
 
@@ -55,7 +60,12 @@ export function MovieCard({
         {genreNames.length > 0 ? <p className="genre-list">{genreNames.join(' • ')}</p> : null}
         <p className="overview">{movie.overview || 'Brak opisu w TMDB.'}</p>
 
-        <button type="button" className="details-button" onClick={() => onOpenDetails(movie.id)}>
+        <button
+          type="button"
+          className="details-button"
+          aria-label={`Pokaż szczegóły filmu ${movie.title}`}
+          onClick={() => onOpenDetails(movie.id)}
+        >
           Szczegóły
         </button>
       </div>
