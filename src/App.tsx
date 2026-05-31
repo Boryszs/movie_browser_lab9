@@ -206,7 +206,7 @@ function HomePage() {
     source === "infinite"
       ? infiniteQuery.isPending
       : source === "popular" || source === "search"
-        ? moviesQuery.isPending
+        ? moviesQuery.isPending || moviesQuery.isPlaceholderData
         : false;
 
   // const isFetching = genresQuery.isFetching || moviesQuery.isFetching || infiniteQuery.isFetching
@@ -219,6 +219,10 @@ function HomePage() {
         : null;
 
   const totalPages = Math.min(moviesQuery.data?.total_pages ?? 1, 500);
+  const shouldShowPagination =
+    (source === "popular" || source === "search") &&
+    !moviesQuery.isPending &&
+    !error;
 
   // const totalResults =
   //   source === 'favorites'
@@ -463,15 +467,13 @@ function HomePage() {
           />
         ) : null}
 
-        {source === "popular" || source === "search" ? (
-          !isLoading && !error ? (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              isPlaceholderData={moviesQuery.isPlaceholderData}
-              onChange={handlePageChange}
-            />
-          ) : null
+        {shouldShowPagination ? (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            isPlaceholderData={moviesQuery.isPlaceholderData}
+            onChange={handlePageChange}
+          />
         ) : null}
 
         {source === "infinite" ? (
