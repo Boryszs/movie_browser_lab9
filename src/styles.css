@@ -109,6 +109,12 @@ img {
   gap: 1rem;
 }
 
+.results-section {
+  display: grid;
+  gap: 1rem;
+  scroll-margin-top: 8rem;
+}
+
 .toolbar,
 .error-banner,
 .empty-state,
@@ -491,6 +497,10 @@ a:focus-visible {
 }
 
 @media (max-width: 860px) {
+  .results-section {
+    scroll-margin-top: 1rem;
+  }
+
   .toolbar {
     grid-template-columns: 1fr;
     position: static;

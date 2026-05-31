@@ -31,9 +31,36 @@ import {
 } from "./components/ToastContainer";
 import "./components/skeleton.css";
 
+const DESKTOP_RESULTS_SCROLL_OFFSET_PX = 128;
+const MOBILE_RESULTS_SCROLL_OFFSET_PX = 16;
+
 function scrollToPageTop(behavior: ScrollBehavior = "auto") {
   window.scrollTo({
     top: 0,
+    left: 0,
+    behavior,
+  });
+}
+
+function scrollToElementTop(
+  element: HTMLElement | null,
+  behavior: ScrollBehavior = "auto",
+) {
+  if (!element) {
+    return;
+  }
+
+  const scrollOffset =
+    window.innerWidth <= 860
+      ? MOBILE_RESULTS_SCROLL_OFFSET_PX
+      : DESKTOP_RESULTS_SCROLL_OFFSET_PX;
+  const top = Math.max(
+    window.scrollY + element.getBoundingClientRect().top - scrollOffset,
+    0,
+  );
+
+  window.scrollTo({
+    top,
     left: 0,
     behavior,
   });
@@ -100,7 +127,7 @@ function HomePage() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [useInfiniteScroll, setUseInfiniteScroll] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const didMountPageRef = useRef(false);
+  const resultsTopRef = useRef<HTMLDivElement | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   // const mockApiMode = getMockApiMode()
   const mock401Enabled = isMock401Enabled();
@@ -223,15 +250,6 @@ function HomePage() {
     return () => observer.disconnect();
   }, [infiniteQuery, shouldUseInfinite]);
 
-  useEffect(() => {
-    if (!didMountPageRef.current) {
-      didMountPageRef.current = true;
-      return;
-    }
-
-    scrollToPageTop("smooth");
-  }, [page]);
-
   const removeToast = (toastId: number) => {
     setToasts((currentToasts) =>
       currentToasts.filter((toast) => toast.id !== toastId),
@@ -267,6 +285,11 @@ function HomePage() {
   };
 
   const handlePageChange = (nextPage: number) => {
+    if (nextPage === page) {
+      return;
+    }
+
+    scrollToElementTop(resultsTopRef.current);
     setPage(nextPage);
   };
 
@@ -375,6 +398,11 @@ function HomePage() {
           </div>
         </section>
 
+        <section
+          ref={resultsTopRef}
+          className="results-section"
+          aria-label="Wyniki filmow"
+        >
         {/*
         <section className="status-row" aria-label="Status aplikacji">
           <StatusPill label="Źródło" value={getSourceLabel(source)} />
@@ -459,6 +487,7 @@ function HomePage() {
             <div ref={sentinelRef} className="sentinel" aria-hidden="true" />
           </div>
         ) : null}
+        </section>
       </main>
 
       <MovieDetailsModal
