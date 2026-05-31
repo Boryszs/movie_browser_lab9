@@ -13,22 +13,13 @@ export function Pagination({
 }: PaginationProps) {
   const safeTotalPages = Math.max(totalPages, 1)
 
-  const handlePageChange = (nextPage: number) => {
-    onChange(nextPage)
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-  }
-
   return (
     <nav className="pagination" aria-label="Paginacja filmów">
       <button
         type="button"
         className="secondary-button"
         disabled={page <= 1}
-        onClick={() => handlePageChange(Math.max(page - 1, 1))}
+        onClick={() => onChange(Math.max(page - 1, 1))}
       >
         Poprzednia
       </button>
@@ -42,7 +33,7 @@ export function Pagination({
         type="button"
         className="secondary-button"
         disabled={page >= safeTotalPages || isPlaceholderData}
-        onClick={() => handlePageChange(page + 1)}
+        onClick={() => onChange(page + 1)}
       >
         Następna
       </button>

@@ -31,6 +31,14 @@ import {
 } from "./components/ToastContainer";
 import "./components/skeleton.css";
 
+function scrollToPageTop(behavior: ScrollBehavior = "auto") {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior,
+  });
+}
+
 type MovieSource =
   | "popular"
   | "search"
@@ -92,6 +100,7 @@ function HomePage() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [useInfiniteScroll, setUseInfiniteScroll] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const didMountPageRef = useRef(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   // const mockApiMode = getMockApiMode()
   const mock401Enabled = isMock401Enabled();
@@ -214,6 +223,15 @@ function HomePage() {
     return () => observer.disconnect();
   }, [infiniteQuery, shouldUseInfinite]);
 
+  useEffect(() => {
+    if (!didMountPageRef.current) {
+      didMountPageRef.current = true;
+      return;
+    }
+
+    scrollToPageTop("smooth");
+  }, [page]);
+
   const removeToast = (toastId: number) => {
     setToasts((currentToasts) =>
       currentToasts.filter((toast) => toast.id !== toastId),
@@ -246,6 +264,10 @@ function HomePage() {
     if (source === "popular" || source === "search") {
       void moviesQuery.refetch();
     }
+  };
+
+  const handlePageChange = (nextPage: number) => {
+    setPage(nextPage);
   };
 
   const handleToggleFavorite = (movie: MovieSummary | FavoriteMovie) => {
@@ -419,7 +441,7 @@ function HomePage() {
               page={page}
               totalPages={totalPages}
               isPlaceholderData={moviesQuery.isPlaceholderData}
-              onChange={setPage}
+              onChange={handlePageChange}
             />
           ) : null
         ) : null}
@@ -450,8 +472,12 @@ function HomePage() {
 
 function App() {
   const location = useLocation();
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const pageVariants = createPageVariants(shouldReduceMotion);
+
+  useEffect(() => {
+    scrollToPageTop();
+  }, [location.pathname, location.search]);
 
   return (
     <AnimatePresence mode="wait">

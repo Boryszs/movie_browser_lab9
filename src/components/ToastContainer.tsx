@@ -47,7 +47,7 @@ function createToastVariants(shouldReduceMotion: boolean): Variants {
 }
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotion() ?? false;
   const toastVariants = createToastVariants(shouldReduceMotion);
 
   return (
